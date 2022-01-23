@@ -2,7 +2,7 @@
 
 from django.db import migrations
 from django.contrib.auth.models import Group
-from auth_users.data import DefaultUserGroups
+from accounts.data import DefaultUserGroups
 
 
 def populate_default_user_groups(*args, **kwargs):
