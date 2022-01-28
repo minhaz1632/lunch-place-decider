@@ -1,3 +1,5 @@
 from django.contrib import admin
+from accounts.models import Restaurant, EmployeeRestaurant
 
-# Register your models here.
+admin.site.register(Restaurant)
+admin.site.register(EmployeeRestaurant)
