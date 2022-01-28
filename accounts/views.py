@@ -4,12 +4,14 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 
 from accounts.serializers import AuthUserSerializer, DummySerializer
 from accounts.data import DefaultUserGroups
+from accounts.permissions import IsRestaurantOwner, IsOfficeEmployee
 
 
 class UserAuthViewSet(ViewSet):
@@ -18,12 +20,25 @@ class UserAuthViewSet(ViewSet):
         return serializer_class(*args, **kwargs)
 
     def get_serializer_class(self):
-        if 'login' in self.action:
+        if self.action == 'restaurant_login' or self.action == 'employee_login':
             return AuthTokenSerializer
-        elif 'signup' in self.action:
+        elif self.action == 'restaurant_signup' or self.action == 'employee_signup':
             return AuthUserSerializer
 
         return DummySerializer
+
+    def get_permissions(self):
+        permissions = []
+
+        if self.action == 'restaurant_logout' or self.action == 'employee_logout':
+            permissions.append(IsAuthenticated())
+
+            if self.action == 'restaurant_logout':
+                permissions.append(IsRestaurantOwner())
+            elif self.action == 'employee_logout':
+                permissions.append(IsOfficeEmployee())
+
+        return permissions
 
     @staticmethod
     def user_signup(data, user_group):
@@ -61,9 +76,6 @@ class UserAuthViewSet(ViewSet):
 
     @staticmethod
     def user_logout(request, user_group):
-        if request.user.groups.filter(name=user_group).exists() is False:
-            raise PermissionDenied()
-
         request.user.auth_token.delete()
 
     @action(methods=['post'], detail=False, url_path='employee/signup', url_name='employee_signup')
