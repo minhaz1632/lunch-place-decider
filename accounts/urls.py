@@ -1,5 +1,5 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework.routers import DefaultRouter
 from accounts.views import UserAuthViewSet
 
 user_auth_view_router = DefaultRouter()

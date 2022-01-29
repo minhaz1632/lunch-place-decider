@@ -1,5 +1,5 @@
+from django.contrib.auth.models import Group, User
 from rest_framework import status
-from django.contrib.auth.models import Group
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,7 +7,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 
 from accounts.serializers import AuthUserSerializer, DummySerializer
 from accounts.data import DefaultUserGroups
@@ -20,9 +19,9 @@ class UserAuthViewSet(ViewSet):
         return serializer_class(*args, **kwargs)
 
     def get_serializer_class(self):
-        if self.action == "restaurant_login" or self.action == "employee_login":
+        if self.action in ("restaurant_login", "employee_login"):
             return AuthTokenSerializer
-        elif self.action == "restaurant_signup" or self.action == "employee_signup":
+        elif self.action in ("restaurant_signup", "employee_signup"):
             return AuthUserSerializer
 
         return DummySerializer
@@ -30,7 +29,7 @@ class UserAuthViewSet(ViewSet):
     def get_permissions(self):
         permissions = []
 
-        if self.action == "restaurant_logout" or self.action == "employee_logout":
+        if self.action in ("restaurant_logout", "employee_logout"):
             permissions.append(IsAuthenticated())
 
             if self.action == "restaurant_logout":
@@ -44,38 +43,38 @@ class UserAuthViewSet(ViewSet):
     def user_signup(data, user_group):
         serializer = AuthUserSerializer(data=data)
 
-        if serializer.is_valid(raise_exception=True):
-            serializer.validated_data.pop("password_confirmation")
-            password = serializer.validated_data.pop("password")
-            user_instance: User = serializer.create(
-                {
-                    **serializer.validated_data,
-                }
-            )
-            user_instance.set_password(password)
-            user_instance.groups.add(Group.objects.get(name=user_group))
-            user_instance.save()
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data.pop("password_confirmation")
+        password = serializer.validated_data.pop("password")
+        user_instance: User = serializer.create(
+            {
+                **serializer.validated_data,
+            }
+        )
+        user_instance.set_password(password)
+        user_instance.groups.add(Group.objects.get(name=user_group))
+        user_instance.save()
 
-            return user_instance
+        return user_instance
 
     @staticmethod
     def user_login(request, user_group):
         serializer = AuthTokenSerializer(data=request.data)
 
-        if serializer.is_valid(raise_exception=True):
-            if (
-                User.objects.filter(
-                    username=serializer.validated_data.get("username"),
-                    groups__name__exact=user_group,
-                ).exists()
-                is False
-            ):
-                raise PermissionDenied()
+        serializer.is_valid(raise_exception=True)
+        if (
+            User.objects.filter(
+                username=serializer.validated_data.get("username"),
+                groups__name__exact=user_group,
+            ).exists()
+            is False
+        ):
+            raise PermissionDenied()
 
-            user = serializer.validated_data["user"]
-            token, created = Token.objects.get_or_create(user=user)
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
 
-            return token, created
+        return token, created
 
     @staticmethod
     def user_logout(request):
@@ -111,7 +110,7 @@ class UserAuthViewSet(ViewSet):
         :param request:
         :return:
         """
-        token, created = self.user_login(
+        token, _ = self.user_login(
             request, DefaultUserGroups.OFFICE_EMPLOYEE.value
         )
         return Response(
@@ -166,7 +165,7 @@ class UserAuthViewSet(ViewSet):
         :param request:
         :return:
         """
-        token, created = self.user_login(
+        token, _ = self.user_login(
             request, DefaultUserGroups.RESTAURANT_OWNER.value
         )
         return Response(
