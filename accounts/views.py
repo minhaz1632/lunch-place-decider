@@ -75,7 +75,7 @@ class UserAuthViewSet(ViewSet):
             return token, created
 
     @staticmethod
-    def user_logout(request, user_group):
+    def user_logout(request):
         request.user.auth_token.delete()
 
     @action(methods=['post'], detail=False, url_path='employee/signup', url_name='employee_signup')
@@ -109,8 +109,8 @@ class UserAuthViewSet(ViewSet):
         :param request:
         :return:
         """
-        self.user_logout(request, DefaultUserGroups.OFFICE_EMPLOYEE.value)
-        return Response(status=status.HTTP_200_OK)
+        self.user_logout(request)
+        return Response('You have logged out successfully', status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=False, url_path='restaurant/signup', url_name='restaurant_signup')
     def restaurant_signup(self, request):
@@ -143,6 +143,6 @@ class UserAuthViewSet(ViewSet):
         :param request:
         :return:
         """
-        self.user_logout(request, DefaultUserGroups.RESTAURANT_OWNER.value)
-        return Response(status=status.HTTP_200_OK)
+        self.user_logout(request)
+        return Response('You have logged out successfully', status=status.HTTP_200_OK)
 

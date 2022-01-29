@@ -29,6 +29,7 @@ urlpatterns = [
     path('openapi/', get_schema_view(
             title="Lunch place decider",
             description="Vote for lunch place",
-            version="1.0.0"
+            version="1.0.0",
+            public=True,
         ), name='openapi-schema'),
 ]
