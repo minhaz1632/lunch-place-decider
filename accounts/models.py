@@ -6,7 +6,7 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=256)
 
     class Meta:
-        db_table = 'restaurant'
+        db_table = "restaurant"
 
 
 class EmployeeRestaurant(models.Model):
@@ -14,4 +14,4 @@ class EmployeeRestaurant(models.Model):
     restaurant = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'employee_restaurant'
+        db_table = "employee_restaurant"
