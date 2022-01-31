@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
-from restaurants.models import Restaurant
 from accounts.permissions import IsRestaurantOwner
+from restaurants.models import Restaurant
 from restaurants.serializers import RestaurantSerializer
 
 
