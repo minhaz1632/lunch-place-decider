@@ -13,6 +13,11 @@ def populate_default_user_groups(*args, **kwargs):
 class Migration(migrations.Migration):
     initial = True
 
+    # Denotes this needs to run after django auth app tables are created
+    dependencies = [
+        ('auth', '0001_initial'),
+    ]
+
     operations = [
         migrations.RunPython(populate_default_user_groups),
     ]
