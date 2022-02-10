@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     # Denotes this needs to run after django auth app tables are created
     dependencies = [
-        ('auth', '0001_initial'),
+        ("auth", "0001_initial"),
     ]
 
     operations = [
