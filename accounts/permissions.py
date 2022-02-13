@@ -15,7 +15,10 @@ class IsRestaurantOwner(BasePermission):
         )
 
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
+        if view.basename == "restaurant_menu":
+            return obj.restaurant.owner == request.user
+        else:
+            return obj.owner == request.user
 
 
 class IsOfficeEmployee(BasePermission):
