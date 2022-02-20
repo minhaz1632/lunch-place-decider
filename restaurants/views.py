@@ -11,6 +11,7 @@ class RestaurantModelViewSet(ModelViewSet):
     """
     Crud api endpoints for the Restaurant model
     """
+
     serializer_class = RestaurantSerializer
     permission_classes = [IsRestaurantOwner]
 
@@ -23,6 +24,7 @@ class RestaurantMenuModelViewSet(ModelViewSet):
     Crud api endpoints for RestaurantMenu model. The list api can be filtered with from_date,
     to_date, exact date and restaurant. It is paginated with default page size 10.
     """
+
     serializer_class = RestaurantMenuSerializer
     permission_classes = [IsRestaurantOwner]
     filter_backends = [DjangoFilterBackend]

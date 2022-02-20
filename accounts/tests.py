@@ -2,7 +2,6 @@ import pytest
 from faker import Faker
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
-from rest_framework.test import force_authenticate
 from rest_framework import status
 from django.contrib.auth.models import User
 
@@ -24,6 +23,21 @@ def get_signup_data():
     profile_dict["password_confirmation"] = profile_dict["password"]
 
     return profile_dict
+
+
+def get_user_client(user_group, logged_in=True):
+    user_data = get_signup_data()
+    user_instance = UserAuthViewSet.user_signup(user_data, user_group)
+    login_data = {
+        "username": user_data.get("username"),
+        "password": user_data.get("password"),
+    }
+    client = APIClient()
+
+    if logged_in:
+        client.login(**login_data)
+
+    return client, user_instance
 
 
 @pytest.mark.django_db
