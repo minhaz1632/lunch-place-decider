@@ -25,5 +25,4 @@ class RestaurantMenu(models.Model):
 
     class Meta:
         db_table = "restaurant_menu"
-        unique_together = ["date", "restaurant_id"]
         ordering = ["-date"]
