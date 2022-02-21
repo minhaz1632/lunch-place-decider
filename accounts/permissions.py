@@ -1,8 +1,8 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import BasePermission
 from accounts.data import DefaultUserGroups
 
 
-class IsRestaurantOwner(IsAuthenticated):
+class IsRestaurantOwner(BasePermission):
     message = "User must be a restaurant owner"
 
     def has_permission(self, request, view):
@@ -14,8 +14,14 @@ class IsRestaurantOwner(IsAuthenticated):
             ).exists()
         )
 
+    def has_object_permission(self, request, view, obj):
+        if view.basename == "restaurant_menu":
+            return obj.restaurant.owner == request.user
+        else:
+            return obj.owner == request.user
 
-class IsOfficeEmployee(IsAuthenticated):
+
+class IsOfficeEmployee(BasePermission):
     message = "User must be an office employee"
 
     def has_permission(self, request, view):

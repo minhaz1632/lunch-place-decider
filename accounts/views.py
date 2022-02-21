@@ -23,8 +23,8 @@ class UserAuthViewSet(ViewSet):
             return AuthTokenSerializer
         elif self.action in ("restaurant_signup", "employee_signup"):
             return AuthUserSerializer
-
-        return DummySerializer
+        else:
+            return DummySerializer
 
     def get_permissions(self):
         permissions = []
@@ -58,8 +58,8 @@ class UserAuthViewSet(ViewSet):
         return user_instance
 
     @staticmethod
-    def user_login(request, user_group):
-        serializer = AuthTokenSerializer(data=request.data)
+    def user_login(data, user_group):
+        serializer = AuthTokenSerializer(data=data)
 
         serializer.is_valid(raise_exception=True)
         if (
@@ -111,7 +111,7 @@ class UserAuthViewSet(ViewSet):
         :return:
         """
         token, _ = self.user_login(
-            request, DefaultUserGroups.OFFICE_EMPLOYEE.value
+            request.data, DefaultUserGroups.OFFICE_EMPLOYEE.value
         )
         return Response(
             {
@@ -166,7 +166,7 @@ class UserAuthViewSet(ViewSet):
         :return:
         """
         token, _ = self.user_login(
-            request, DefaultUserGroups.RESTAURANT_OWNER.value
+            request.data, DefaultUserGroups.RESTAURANT_OWNER.value
         )
         return Response(
             {
