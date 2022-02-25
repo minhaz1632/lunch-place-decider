@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'accounts',
     'restaurants',
     'django_filters',
+    'polls'
 ]
 
 MIDDLEWARE = [
