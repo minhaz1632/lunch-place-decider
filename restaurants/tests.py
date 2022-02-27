@@ -21,8 +21,12 @@ def get_restaurant_menu_dates():
     return menu_dates
 
 
-def create_restaurant_menu(restaurant):
-    menu_dates = get_restaurant_menu_dates()
+def create_restaurant_menu(restaurant, received_dates=None):
+    menu_dates = received_dates
+
+    if menu_dates is None:
+        menu_dates = get_restaurant_menu_dates()
+
     menus = []
 
     for menu_date in menu_dates:
