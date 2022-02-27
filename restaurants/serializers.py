@@ -1,7 +1,8 @@
 from datetime import date
 from rest_framework.serializers import ModelSerializer
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from restaurants.models import Restaurant, RestaurantMenu
+from polls.utils import is_last_two_days_winner
 
 
 class RestaurantSerializer(ModelSerializer):
@@ -28,6 +29,12 @@ class RestaurantMenuSerializer(ModelSerializer):
         if date.today() >= attrs.get("date"):
             raise ValidationError("You can upload menu for upcoming days.")
 
-        if attrs.get("restaurant").owner != self.context.get("request").user:
+        restaurant = attrs.get("restaurant")
+
+        if restaurant.owner != self.context.get("request").user:
             raise ValidationError("Please select a valid restaurant.")
+
+        if is_last_two_days_winner(restaurant.id):
+            raise PermissionDenied("The winner restaurant of last two days is not eligible")
+
         return attrs

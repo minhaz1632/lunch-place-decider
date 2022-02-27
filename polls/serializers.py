@@ -1,8 +1,11 @@
-from datetime import date
+from datetime import date, datetime
+from dateutil import relativedelta
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from polls.models import Polls
+
+VOTING_DEADLINE = date.today() + relativedelta.relativedelta(hour=13)
 
 
 class PollsSerializer(serializers.ModelSerializer):
@@ -14,14 +17,26 @@ class PollsSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         restaurant_menu = attrs.get("restaurant_menu")
 
+        if datetime.now() > VOTING_DEADLINE:
+            raise ValidationError("Voting is allowed until 1PM")
+
         if restaurant_menu.date != date.today():
             raise ValidationError("You can only vote for Today's Menu")
 
         return attrs
 
     def create(self, validated_data):
-        polls_item = Polls(**validated_data)
-        polls_item.employee = self.context.get("request").user
+        user = self.context.get("request").user
+        polls_item = Polls.objects.get(
+            employee=user, restaurant_menu__date=date.today()
+        )
+
+        if polls_item:
+            for key in validated_data:
+                setattr(polls_item, key, validated_data[key])
+        else:
+            polls_item = Polls(**validated_data)
+            polls_item.employee = self.context.get("request").user
         polls_item.save()
 
         return polls_item
