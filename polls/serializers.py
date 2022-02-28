@@ -50,3 +50,7 @@ class WinnerMenuSerializer(serializers.Serializer):
     menu_title = serializers.CharField(source="restaurant_menu__title")
     menu_description = serializers.CharField(source="restaurant_menu__description")
     polls_count = serializers.IntegerField()
+    message = serializers.SerializerMethodField()
+
+    def get_message(self, obj):
+        return f"Voting is {'closed' if VOTING_DEADLINE < datetime.now() else 'still open.'}"

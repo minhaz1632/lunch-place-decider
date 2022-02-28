@@ -38,3 +38,7 @@ class RestaurantMenuSerializer(ModelSerializer):
             raise PermissionDenied("The winner restaurant of last two days is not eligible")
 
         return attrs
+
+
+class RestaurantMenuOptionSerializer(RestaurantMenuSerializer):
+    restaurant = RestaurantSerializer()
