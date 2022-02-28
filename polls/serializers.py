@@ -19,7 +19,7 @@ class PollsSerializer(serializers.ModelSerializer):
         restaurant_menu = attrs.get("restaurant_menu")
 
         if datetime.now() > VOTING_DEADLINE:
-            raise ValidationError("Voting is allowed until 1PM")
+            raise ValidationError(f"Voting is allowed until {VOTING_DEADLINE.strftime('%H:%M %p')}")
 
         if restaurant_menu.date != date.today():
             raise ValidationError("You can only vote for Today's Menu")
