@@ -27,9 +27,9 @@ class PollsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context.get("request").user
-        polls_item = Polls.objects.get(
+        polls_item = Polls.objects.filter(
             employee=user, restaurant_menu__date=date.today()
-        )
+        ).first()
 
         if polls_item:
             for key in validated_data:
