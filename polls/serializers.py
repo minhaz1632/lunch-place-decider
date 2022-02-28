@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from polls.models import Polls
+from polls.utils import is_last_two_days_winner
 
 VOTING_DEADLINE = date.today() + relativedelta.relativedelta(hour=13)
 
@@ -22,6 +23,9 @@ class PollsSerializer(serializers.ModelSerializer):
 
         if restaurant_menu.date != date.today():
             raise ValidationError("You can only vote for Today's Menu")
+
+        if is_last_two_days_winner(restaurant_menu.restaurant.id):
+            raise ValidationError("The winner restaurant of last two days is not eligible")
 
         return attrs
 
