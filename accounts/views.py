@@ -10,7 +10,6 @@ from rest_framework.authtoken.models import Token
 
 from accounts.serializers import AuthUserSerializer, DummySerializer
 from accounts.data import DefaultUserGroups
-from accounts.permissions import IsRestaurantOwner, IsOfficeEmployee
 
 
 class UserAuthViewSet(ViewSet):
@@ -28,14 +27,8 @@ class UserAuthViewSet(ViewSet):
 
     def get_permissions(self):
         permissions = []
-
-        if self.action in ("restaurant_logout", "employee_logout"):
+        if self.action == "logout":
             permissions.append(IsAuthenticated())
-
-            if self.action == "restaurant_logout":
-                permissions.append(IsRestaurantOwner())
-            elif self.action == "employee_logout":
-                permissions.append(IsOfficeEmployee())
 
         return permissions
 
@@ -123,21 +116,6 @@ class UserAuthViewSet(ViewSet):
     @action(
         methods=["post"],
         detail=False,
-        url_path="employee/logout",
-        url_name="employee_logout",
-    )
-    def employee_logout(self, request):
-        """
-        Employee api endpoint to logout.
-        :param request:
-        :return:
-        """
-        self.user_logout(request)
-        return Response("You have logged out successfully", status=status.HTTP_200_OK)
-
-    @action(
-        methods=["post"],
-        detail=False,
         url_path="restaurant/signup",
         url_name="restaurant_signup",
     )
@@ -178,12 +156,10 @@ class UserAuthViewSet(ViewSet):
     @action(
         methods=["post"],
         detail=False,
-        url_path="restaurant/logout",
-        url_name="restaurant_logout",
     )
-    def restaurant_logout(self, request):
+    def logout(self, request):
         """
-        Restaurant api endpoint to logout.
+        Common logout api endpoint for both office employees and restaurant owner
         :param request:
         :return:
         """
