@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('restaurants', '0005_alter_restaurantmenu_options'),
+        ("restaurants", "0005_alter_restaurantmenu_options"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='restaurantmenu',
+            name="restaurantmenu",
             unique_together=set(),
         ),
     ]
