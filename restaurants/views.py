@@ -1,4 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from accounts.permissions import IsRestaurantOwner
 from restaurants.models import Restaurant, RestaurantMenu
@@ -13,7 +14,7 @@ class RestaurantModelViewSet(ModelViewSet):
     """
 
     serializer_class = RestaurantSerializer
-    permission_classes = [IsRestaurantOwner]
+    permission_classes = [IsAuthenticated, IsRestaurantOwner]
 
     def get_queryset(self):
         return Restaurant.objects.filter(owner=self.request.user)
@@ -26,7 +27,7 @@ class RestaurantMenuModelViewSet(ModelViewSet):
     """
 
     serializer_class = RestaurantMenuSerializer
-    permission_classes = [IsRestaurantOwner]
+    permission_classes = [IsAuthenticated, IsRestaurantOwner]
     filter_backends = [DjangoFilterBackend]
     filterset_class = RestaurantMenuFilter
     pagination_class = StandardResultsSetPagination

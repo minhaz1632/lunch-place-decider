@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from accounts.permissions import IsOfficeEmployee
@@ -14,7 +15,12 @@ from restaurants.serializers import RestaurantMenuOptionSerializer
 
 
 class PollsViewSet(GenericViewSet, CreateModelMixin):
-    permission_classes = [IsOfficeEmployee]
+    def get_permissions(self):
+        permissions = [IsAuthenticated()]
+        if self.action != "winner":
+            permissions.append(IsOfficeEmployee())
+
+        return permissions
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
