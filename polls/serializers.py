@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from polls.models import Polls
 from polls.utils import is_last_two_days_winner
 
-VOTING_DEADLINE = timezone.localdate() + relativedelta.relativedelta(hour=13)
+VOTING_DEADLINE = timezone.localtime() + relativedelta.relativedelta(hour=13, minute=0)
 
 
 class PollsSerializer(serializers.ModelSerializer):
