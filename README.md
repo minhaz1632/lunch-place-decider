@@ -25,8 +25,10 @@ This application has been implemented using following technologies:
 - Postgresql 14.0
 - Unit tests have been implemented with Pytest and Pytest-django
 
-##Launch Instructions
-###Launch with Docker
+#Launch Instructions
+Launch with Docker
+---------------------
+--------------------
 The docker containers were created using Docker version 2.3.0.4. To launch the application 
 using docker:
 1. Clone the project code from the repository.
@@ -37,7 +39,9 @@ using docker:
 the project root directory.
 6. In order to run Pytest unit test, run ``docker-compose exec web pytest``.
 
-###Launching outside Docker
+Launching outside Docker
+----------------------------
+---------------------------
 1. Make sure python 3.8 or later version and postgresql 14.0 is installed.
 2. Create a database role with ``lunch_place_decider`` and password ``lunch_place_decider``. 
 Also create a database named `lunch_place_decider`.
@@ -49,7 +53,7 @@ Also create a database named `lunch_place_decider`.
     3. ``python manage.py runserver``
 6. In order to run unit tests, run ``pytest`` in project root directory.
 
-##Future improvement scopes
+#Future improvement scopes
 1. Current implementation has static 1PM voting deadline. A settings item can be added to modify that as per necessity.
 Similar settings can be provided for restaurant menu upload deadline also.
 2. Provided unit tests do not provide 100% code coverage. More unit tests can be added to ensure coverage. Additionally
