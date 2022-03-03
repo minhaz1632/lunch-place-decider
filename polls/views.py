@@ -1,9 +1,10 @@
-from datetime import date
+from django.utils import timezone
 from django.db.models import Count, F
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from accounts.permissions import IsOfficeEmployee
@@ -14,7 +15,12 @@ from restaurants.serializers import RestaurantMenuOptionSerializer
 
 
 class PollsViewSet(GenericViewSet, CreateModelMixin):
-    permission_classes = [IsOfficeEmployee]
+    def get_permissions(self):
+        permissions = [IsAuthenticated()]
+        if self.action != "winner":
+            permissions.append(IsOfficeEmployee())
+
+        return permissions
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
@@ -36,7 +42,7 @@ class PollsViewSet(GenericViewSet, CreateModelMixin):
     def menu_options(self, request):
         available_menu_options = (
             RestaurantMenu.objects.select_related("restaurant")
-            .filter(date=date.today())
+            .filter(date=timezone.localdate())
             .all()
         )
 
@@ -62,7 +68,7 @@ class PollsViewSet(GenericViewSet, CreateModelMixin):
                 menu_title=F("restaurant_menu__title"),
                 menu_description=F("restaurant_menu__description"),
             )
-            .filter(restaurant_menu__date=date.today())
+            .filter(restaurant_menu__date=timezone.localdate())
             .order_by(F("polls_count").desc())
             .first()
         )
