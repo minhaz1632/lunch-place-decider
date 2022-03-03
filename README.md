@@ -58,5 +58,8 @@ Coverage package can be used to generate coverage report which will help to impr
 Additional functionality can be added to check for skip weekends and holidays while calculating winners.
 4. Integrate jwt token for additional features like auto expiry of issued authentication tokens.
 5. Add third party api documentation frameworks to allow api testing from documentation page using token authentication.
+6. Some additional information currently returned with api endpoints responses can be obfuscated e.g. when checking for 
+current day menu options, it returns owner id along with restaurant menu and restaurant information which is not 
+necessary.
 
  
