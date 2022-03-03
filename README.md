@@ -38,7 +38,7 @@ the project root directory.
 6. In order to run Pytest unit test, run ``docker-compose exec web pytest``.
 
 ###Launching outside Docker
-1. Make sure python 3.8 and postgresql 14.0 is installed.
+1. Make sure python 3.8 or later version and postgresql 14.0 is installed.
 2. Create a database role with ``lunch_place_decider`` and password ``lunch_place_decider``. 
 Also create a database named `lunch_place_decider`.
 3. Clone the project code from the repository.
