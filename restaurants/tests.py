@@ -1,7 +1,8 @@
 import urllib
-from datetime import date, timedelta
+from datetime import timedelta
 import pytest
 from faker import Faker
+from django.utils import timezone
 from rest_framework.reverse import reverse
 from rest_framework import status
 from assertpy import assert_that
@@ -16,7 +17,7 @@ faker: Faker = Faker()
 def get_restaurant_menu_dates():
     menu_dates = []
     for num in range(10):
-        menu_dates.append(date.today() + timedelta(days=num))
+        menu_dates.append(timezone.localdate() + timedelta(days=num))
 
     return menu_dates
 
@@ -148,9 +149,9 @@ class TestRestaurantMenu:
     @pytest.mark.parametrize(
         "menu_date, expected_status",
         [
-            (date.today(), status.HTTP_400_BAD_REQUEST),
-            (date.today() + timedelta(days=-1), status.HTTP_400_BAD_REQUEST),
-            (date.today() + timedelta(days=1), status.HTTP_201_CREATED),
+            (timezone.localdate(), status.HTTP_400_BAD_REQUEST),
+            (timezone.localdate() + timedelta(days=-1), status.HTTP_400_BAD_REQUEST),
+            (timezone.localdate() + timedelta(days=1), status.HTTP_201_CREATED),
         ],
     )
     def test_menu_creation_future_date(self, menu_date, expected_status):

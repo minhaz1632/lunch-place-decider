@@ -1,5 +1,6 @@
-from datetime import date, timedelta
+from datetime import timedelta
 import pytest
+from django.utils import timezone
 
 from accounts.data import DefaultUserGroups
 from accounts.tests import get_user_client
@@ -8,7 +9,7 @@ from polls.models import Polls
 from polls.utils import is_last_two_days_winner
 
 
-MENU_DATES = [date.today() - timedelta(days=1), date.today() - timedelta(days=2)]
+MENU_DATES = [timezone.localdate() - timedelta(days=1), timezone.localdate() - timedelta(days=2)]
 
 
 def restaurant_menu_creation():

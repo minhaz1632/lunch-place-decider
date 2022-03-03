@@ -1,4 +1,4 @@
-from datetime import date
+from django.utils import timezone
 from django.db.models import Count, F
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -36,7 +36,7 @@ class PollsViewSet(GenericViewSet, CreateModelMixin):
     def menu_options(self, request):
         available_menu_options = (
             RestaurantMenu.objects.select_related("restaurant")
-            .filter(date=date.today())
+            .filter(date=timezone.localdate())
             .all()
         )
 
@@ -62,7 +62,7 @@ class PollsViewSet(GenericViewSet, CreateModelMixin):
                 menu_title=F("restaurant_menu__title"),
                 menu_description=F("restaurant_menu__description"),
             )
-            .filter(restaurant_menu__date=date.today())
+            .filter(restaurant_menu__date=timezone.localdate())
             .order_by(F("polls_count").desc())
             .first()
         )

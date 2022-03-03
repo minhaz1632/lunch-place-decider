@@ -1,4 +1,4 @@
-from datetime import date
+from django.utils import timezone
 from rest_framework.serializers import ModelSerializer
 from rest_framework.exceptions import ValidationError
 from restaurants.models import Restaurant, RestaurantMenu
@@ -25,7 +25,7 @@ class RestaurantMenuSerializer(ModelSerializer):
         read_only_fields = ["created_at", "last_updated_at"]
 
     def validate(self, attrs):
-        if date.today() >= attrs.get("date"):
+        if timezone.localdate() >= attrs.get("date"):
             raise ValidationError("You can upload menu for upcoming days.")
 
         restaurant = attrs.get("restaurant")

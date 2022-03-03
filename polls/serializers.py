@@ -1,12 +1,12 @@
-from datetime import date, datetime
 from dateutil import relativedelta
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from polls.models import Polls
 from polls.utils import is_last_two_days_winner
 
-VOTING_DEADLINE = date.today() + relativedelta.relativedelta(hour=13)
+VOTING_DEADLINE = timezone.localdate() + relativedelta.relativedelta(hour=13)
 
 
 class PollsSerializer(serializers.ModelSerializer):
@@ -18,12 +18,12 @@ class PollsSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         restaurant_menu = attrs.get("restaurant_menu")
 
-        if datetime.now() > VOTING_DEADLINE:
+        if timezone.localtime() > VOTING_DEADLINE:
             raise ValidationError(
                 f"Voting is allowed until {VOTING_DEADLINE.strftime('%H:%M %p')}"
             )
 
-        if restaurant_menu.date != date.today():
+        if restaurant_menu.date != timezone.localdate():
             raise ValidationError("You can only vote for Today's Menu")
 
         if is_last_two_days_winner(restaurant_menu.restaurant.id):
@@ -36,7 +36,7 @@ class PollsSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context.get("request").user
         polls_item = Polls.objects.filter(
-            employee=user, restaurant_menu__date=date.today()
+            employee=user, restaurant_menu__date=timezone.localdate()
         ).first()
 
         if polls_item:
@@ -61,4 +61,4 @@ class WinnerMenuSerializer(serializers.Serializer):
     message = serializers.SerializerMethodField()
 
     def get_message(self, obj):
-        return f"Voting is {'closed' if VOTING_DEADLINE < datetime.now() else 'still open.'}"
+        return f"Voting is {'closed' if VOTING_DEADLINE < timezone.localtime() else 'still open.'}"
